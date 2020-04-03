@@ -119,7 +119,15 @@ enum class Direction {
      * Вернуть направление, противоположное данному.
      * Для INCORRECT вернуть INCORRECT
      */
-    fun opposite(): Direction = TODO()
+    fun opposite(): Direction = when (this) {
+        RIGHT -> LEFT;
+        UP_RIGHT -> DOWN_LEFT;
+        UP_LEFT -> DOWN_RIGHT;
+        LEFT -> RIGHT;
+        DOWN_LEFT -> UP_RIGHT;
+        DOWN_RIGHT -> UP_LEFT;
+        INCORRECT -> INCORRECT;
+    }
 
     /**
      * Средняя
@@ -131,7 +139,12 @@ enum class Direction {
      * Для направления INCORRECT бросить исключение IllegalArgumentException.
      * При решении этой задачи попробуйте обойтись без перечисления всех семи вариантов.
      */
-    fun next(): Direction = TODO()
+    fun next(): Direction {
+        if (this == INCORRECT) throw(IllegalArgumentException(""))
+        if (this == DOWN_RIGHT) return RIGHT;
+        val arr = values();
+        return arr[this.ordinal + 1];
+    }
 
     /**
      * Простая
@@ -139,7 +152,7 @@ enum class Direction {
      * Вернуть true, если данное направление совпадает с other или противоположно ему.
      * INCORRECT не параллельно никакому направлению, в том числе другому INCORRECT.
      */
-    fun isParallel(other: Direction): Boolean = TODO()
+    fun isParallel(other: Direction): Boolean = (this != INCORRECT && (this == other || this == other.opposite()))
 }
 
 /**
