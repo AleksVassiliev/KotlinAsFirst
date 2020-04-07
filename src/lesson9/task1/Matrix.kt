@@ -32,6 +32,9 @@ interface Matrix<E> {
     operator fun set(row: Int, column: Int, value: E)
 
     operator fun set(cell: Cell, value: E)
+
+    fun getRow(row: Int): List<E>
+    fun getColumn(col: Int): List<E>
 }
 
 /**
@@ -41,32 +44,76 @@ interface Matrix<E> {
  * height = высота, width = ширина, e = чем заполнить элементы.
  * Бросить исключение IllegalArgumentException, если height или width <= 0.
  */
-fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> = TODO()
+fun <E> createMatrix(height: Int, width: Int, e: E): Matrix<E> {
+    if (height > 0 && width > 0) {
+        return MatrixImpl(height, width, e);
+    }
+    throw(IllegalArgumentException());
+}
 
 /**
  * Средняя сложность
  *
  * Реализация интерфейса "матрица"
  */
-class MatrixImpl<E> : Matrix<E> {
-    override val height: Int = TODO()
+class MatrixImpl<E>(h: Int, w: Int, e: E) : Matrix<E> {
+    override val height: Int = h
+    override val width: Int = w
 
-    override val width: Int = TODO()
+    private val data = mutableListOf<E>();
 
-    override fun get(row: Int, column: Int): E = TODO()
+    init {
+        for (i in 0 until width * height) {
+            data.add(e);
+        }
+    }
 
-    override fun get(cell: Cell): E = TODO()
+    override fun get(row: Int, column: Int): E = data[row * width + column];
+
+    override fun get(cell: Cell): E = get(cell.row, cell.column);
 
     override fun set(row: Int, column: Int, value: E) {
-        TODO()
+        data[row * width + column] = value;
     }
 
-    override fun set(cell: Cell, value: E) {
-        TODO()
+    override fun set(cell: Cell, value: E) = set(cell.row, cell.column, value);
+
+    override fun equals(other: Any?) =
+        other is MatrixImpl<*> && height == other.height && width == other.width && data == other.data;
+
+    override fun toString(): String {
+        val sb = StringBuilder();
+        sb.append("[");
+        for (row in 0 until height) {
+            var lst = mutableListOf<String>()
+            for (col in 0 until width)
+                lst.add(this[row, col].toString());
+            sb.append("[");
+            sb.append(lst.joinToString(", "));
+            sb.append("]");
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
-    override fun equals(other: Any?) = TODO()
+    override fun getRow(row: Int): List<E> {
+        var list = mutableListOf<E>();
+        if (row < height) {
+            for (j in 0 until width) {
+                list.add(this[row, j]);
+            }
+        }
+        return list;
+    }
 
-    override fun toString(): String = TODO()
+    override fun getColumn(col: Int): List<E> {
+        var list = mutableListOf<E>();
+        if (col < width) {
+            for (i in 0 until height) {
+                list.add(this[i, col]);
+            }
+        }
+        return list;
+    }
 }
 
